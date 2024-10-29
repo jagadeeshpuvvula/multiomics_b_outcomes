@@ -1,0 +1,71 @@
+---
+title: "02_metabolome _annot"
+author: "Puvvula"
+date: "2024-10-28"
+output: pdf_document
+---
+
+```{r}
+#Need R4.2
+library(xMSannotator)
+```
+
+#mom and baby feature tables
+```{r}
+mom_ft<- read_csv(paste0(analy_dat, "mom_ft.csv"))
+baby_ft<- read_csv(paste0(analy_dat, "baby_ft.csv"))
+```
+
+```{r}
+dataA<- read.table("~/Documents/multi_omics_b_ocms/metabolome_dat/combat_hilicpos.txt", header = T, sep = "\t") |>
+  dplyr::select(-c(3:10)) |>
+  janitor::clean_names() |>
+  tidyr::drop_na()
+
+mode_neg<- c("neg")
+mode_pos<- c("pos")
+filter_ion_neg<- c("M+FA-H [1-]", "M-H [1-]", "2M-H [1-]", "M-H+O [1-]", "M(C13)-H [1-]", "2M+FA-H [1-]", "M-3H [3-]", 
+               "M-2H [2-]", "M+ACN-H [1-]", "M+HCOO [1-]", "M+CH3COO [1-]", "MH2O-H [1-]")
+
+filter_ion_pos<- c("M [1+]", "M+H [1+]", "M+2H [2+]", "M+3H [3+]", "M+H2O+H [1+]", "M-H2O+H [1+]", "M(C13)+H [1+]", 
+                   "M(C13)+2H [2+]", "M(C13)+3H [3+]", "M-NH3+H [1+]", "M+ACN+H [1+]", "M+ACN+2H [2+]", "M+2ACN+2H [2+]", 
+                   "M+3ACN+2H [2+]", "M+NH4 [1+]", "M+H+NH4 [2+]", "2M+H [1+]", "2M+ACN+H [1+]")
+
+mass_def_mode<- "neg"
+output_folder<- "~/Documents/multi_omics_b_ocms/metabolome_dat/annotated/"
+
+multilevelannotation(dataA = dataA, 
+                     max.mz.diff = 3, max.rt.diff = 3, #mass and retention tolerance
+                     cormethod = "pearson", 
+                     num_nodes = 10, #nodes for parallel processing
+                     queryadductlist = c("all"), 
+                     mode = mode_pos, #Mass-spec scan mode
+                     outloc= output_folder, 
+                     db_name = "KEGG", #database to find metabolites from
+                     adduct_weights = NA, #provide a list we are interested metabolites from a specific parent
+                     num_sets = 300, #
+                     allsteps = TRUE, #runs all 5 steps for annotation
+                     corthresh = 0.85, #strength of correlation
+                     NOPS_check = TRUE, 
+                     customIDs = NA,
+                     missing.value = NA, 
+                     deepsplit = 2, 
+                     networktype = "unsigned",
+                     minclustsize = 10, 
+                     module.merge.dissimilarity = 0.2, 
+                     filter.by = filter_ion_pos, # M+H for positive direction
+                     redundancy_check = TRUE,
+                     min_ions_perchem = 2, 
+                     #biofluid.location = c("Blood"), #only for HMDB 
+                     #origin = c("Exogenous"), #only for HMDB
+                     status = NA, 
+                     boostIDs = NA, max_isp = 5,
+                     MplusH.abundance.ratio.check = FALSE, 
+                     customDB = NA, 
+                     HMDBselect = "union", 
+                     mass_defect_window = 0.01,
+                     mass_defect_mode = mass_def_mode,  
+                     pathwaycheckmode = "pm" # boost scores if there are other metabolites from the same pathway
+                     )
+```
+

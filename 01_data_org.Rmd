@@ -1,0 +1,22 @@
+---
+title: "01_data_org"
+author: "Puvvula"
+date: "2024-10-28"
+output: pdf_document
+---
+
+#Exposure and outcome data
+```{r}
+dat<- read_csv(paste0(analy_dat, "chem_qn_fin.csv")) |>
+  select(-c("b_pb", "bpf", "tcc", "tcs", "mcoch", "m_hi_nch", "m_cpp",
+            "m_ecpp", "m_ehhp", "m_ehp", "m_eohp", "m_np", 
+            "otherstove", "hh_adult", "hh_children", "hh_tot",
+            "moved", "dur_residence", "dist_majhw", "dist_majroad",
+            "stovetype", "stoveuse", "bbquse", "ppghtn", "gesthtn",
+            "preeclamp", "ppgdm", "gestdm", "anemia", "td", "csec", "induce",
+            "memrup", "apgar1", "apgar5"))|>
+  mutate(across(4:29, ~ log10(. + 1))) |>
+  mutate(across(4:29, ~ (. - mean(.)) / sd(.))) |>
+  mutate(across(where(is.character), factor))
+```
+

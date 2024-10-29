@@ -1,0 +1,49 @@
+---
+title: "00_env_init"
+author: "Puvvula"
+date: "2024-10-28"
+output: pdf_document
+---
+
+#env_prep
+```{r}
+install_and_source_packages <- function() {
+  # Install packages
+  install.packages(c(
+    "WGCNA", "snow", "doSNOW", "parallel", "e1071", "XML", "R2HTML", "RCurl",
+    "flashClust", "plyr", "png", "rjson", "devtools"), dependencies = TRUE)
+  
+  # Install Bioconductor packages
+  source("http://bioconductor.org/biocLite.R")
+  BiocManager::install(c("Rdisop", "SSOAP", "KEGGREST", "pcaMethods", 
+                         "matrixStats", "Hmisc", "splines", "foreach", 
+                         "doParallel", "fastcluster", "dynamicTreeCut",
+                         "survival", "GO.db", "preprocessCore", "impute",
+                         "xcms", "limma", "sva", "mzR"))
+  
+  # Install packages from GitHub
+  devtools::install_github("omegahat/XMLSchema")
+  devtools::install_github("bdemeshev/SSOAP")
+  devtools::install_github("kuppal2/xMWAS")
+  devtools::install_github("kuppal2/xmsPANDA")
+  
+  # Source additional files (if needed)
+  source("http://bioconductor.org/biocLite.R")
+  biocLite(c("xcms", "limma", "sva", "mzR"))
+  
+  # Source other files (if needed)
+  # ...
+}
+
+# Call the function to install and source the packages
+install_and_source_packages()
+```
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+```{r}
+analy_dat<- "~/Documents/phth_phe_MWAS/analy_dat/"
+```
+
